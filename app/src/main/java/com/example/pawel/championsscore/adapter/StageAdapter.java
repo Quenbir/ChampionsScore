@@ -26,7 +26,7 @@ public class StageAdapter extends ArrayAdapter<Stage> {
 
     private List<Button> buttons = new ArrayList<>();
 
-    public StageAdapter(Context context, int resource, <Stage> objects) {
+    public StageAdapter(Context context, int resource, List <Stage> objects) {
         super(context, resource, objects);
         this.context = context;
         this.stages = objects;
@@ -44,6 +44,7 @@ public class StageAdapter extends ArrayAdapter<Stage> {
 
         TextView textView = (TextView) view.findViewById(R.id.textView);
         textView.setText(stage.getName());
+        textView.setTag(stage.getId());
         return view;
     }
 }
