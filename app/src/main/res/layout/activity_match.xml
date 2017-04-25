@@ -61,6 +61,5 @@
         android:text="19:00"
         android:minHeight="50dp" />
 
-    <!--  divider -->
 
 </LinearLayout>

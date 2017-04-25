@@ -6,15 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.pawel.championsscore.R;
 import com.example.pawel.championsscore.model.Match;
-import com.example.pawel.championsscore.model.Stage;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,12 +19,9 @@ import java.util.List;
 
 public class MatchAdapter extends ArrayAdapter<Match> {
     private Context context;
-    @SuppressWarnings("unused")
     private List<Match> matches;
 
-    private List<Button> buttons = new ArrayList<>();
-
-    public MatchAdapter(Context context, int resource, List <Match> objects) {
+    public MatchAdapter(Context context, int resource, List<Match> objects) {
         super(context, resource, objects);
         this.context = context;
         this.matches = objects;
@@ -55,7 +48,6 @@ public class MatchAdapter extends ArrayAdapter<Match> {
 
         TextView textView4 = (TextView) view.findViewById(R.id.textAwayTeam);
         textView4.setText(match.getAwayTeam());
-
 
         TextView textView5 = (TextView) view.findViewById(R.id.textTime);
         textView5.setText(android.text.format.DateFormat.format("HH:mm", match.getDate()));

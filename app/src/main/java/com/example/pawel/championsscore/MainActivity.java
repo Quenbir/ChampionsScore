@@ -1,44 +1,81 @@
 package com.example.pawel.championsscore;
 
-import android.app.ListActivity;
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 
-import com.example.pawel.championsscore.adapter.StageAdapter;
-import com.example.pawel.championsscore.model.Stage;
+import com.example.pawel.championsscore.fragment.MatchesFragment;
+import com.example.pawel.championsscore.fragment.StageFragment;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+public class MainActivity extends FragmentActivity
+        implements StageFragment.OnStageSelectedListener, MatchesFragment.OnMatchSelectedListener {
 
-public class MainActivity extends ListActivity {
-
+    /**
+     * Called when the activity is first created.
+     */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        List<Stage> stages = new ArrayList<>(Arrays.asList(new Stage("1/8"),new Stage("1/4"),new Stage("1/2"),new Stage("final")));
+        // Check whether the activity is using the layout version with
+        // the fragment_container FrameLayout. If so, we must add the first fragment
+        if (findViewById(R.id.fragment_container) != null) {
 
-        StageAdapter adapter = new StageAdapter(this, R.layout.activity_stage, stages);
-        setListAdapter(adapter);
-
-        final ListView ls = (ListView) findViewById(android.R.id.list);
-
-        ls.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getApplicationContext(), MatchesActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+            // However, if we're being restored from a previous state,
+            // then we don't need to do anything and should return or else
+            // we could end up with overlapping fragments.
+            if (savedInstanceState != null) {
+                return;
             }
-        });
+
+            // Create an instance of ExampleFragment
+            StageFragment firstFragment = new StageFragment();
+
+            // In case this activity was started with special instructions from an Intent,
+            // pass the Intent's extras to the fragment as arguments
+            firstFragment.setArguments(getIntent().getExtras());
+
+            // Add the fragment to the 'fragment_container' FrameLayout
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, firstFragment).commit();
+        }
+    }
+
+    public void onStageSelected(int position) {
+        // The user selected the headline of an article from the StageFragment
+
+        // Capture the article fragment from the activity layout
+        MatchesFragment matchesFragment = (MatchesFragment)
+                getSupportFragmentManager().findFragmentById(R.id.matches_fragment);
+
+        if (matchesFragment != null) {
+            // If article frag is available, we're in two-pane layout...
+
+            // Call a method in the ArticleFragment to update its content
+            matchesFragment.updateMachtesView(position);
+
+        } else {
+            // If the frag is not available, we're in the one-pane layout and must swap frags...
+
+            // Create fragment and give it an argument for the selected article
+            MatchesFragment newFragment = new MatchesFragment();
+            Bundle args = new Bundle();
+            args.putInt(MatchesFragment.ARG_POSITION, position);
+            newFragment.setArguments(args);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            // Replace whatever is in the fragment_container view with this fragment,
+            // and add the transaction to the back stack so the user can navigate back
+            transaction.replace(R.id.fragment_container, newFragment);
+            transaction.addToBackStack(null);
+
+            // Commit the transaction
+            transaction.commit();
+        }
+    }
+
+    public void onMatchSelected(int position) {
 
     }
 }

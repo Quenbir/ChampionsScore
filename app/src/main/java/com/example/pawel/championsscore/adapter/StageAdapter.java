@@ -16,17 +16,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Mateusz on 23.03.2017.
+ * Created by Mateusz on 25.04.2017.
  */
 
 public class StageAdapter extends ArrayAdapter<Stage> {
+
     private Context context;
-    @SuppressWarnings("unused")
     private List<Stage> stages;
 
-    private List<Button> buttons = new ArrayList<>();
-
-    public StageAdapter(Context context, int resource, List <Stage> objects) {
+    public StageAdapter(Context context, int resource, List<Stage> objects) {
         super(context, resource, objects);
         this.context = context;
         this.stages = objects;
@@ -44,7 +42,6 @@ public class StageAdapter extends ArrayAdapter<Stage> {
 
         TextView textView = (TextView) view.findViewById(R.id.textView);
         textView.setText(stage.getName());
-        textView.setTag(stage.getId());
         return view;
     }
 }

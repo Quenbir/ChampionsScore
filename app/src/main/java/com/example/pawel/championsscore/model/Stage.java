@@ -3,12 +3,11 @@ package com.example.pawel.championsscore.model;
 /**
  * Created by Mateusz on 23.03.2017.
  */
+public class Stage {
 
-public class Stage{
+    private String name;
 
-private String name;
-
-    private int id ;
+    private int id;
 
     public int getId() {
         return id;
@@ -26,7 +25,8 @@ private String name;
         this.name = name;
     }
 
-    public Stage(String name){
+    public Stage(int id, String name) {
+        this.id = id;
         this.name = name;
     }
 }
