@@ -13,11 +13,6 @@ import com.example.pawel.championsscore.R;
 import com.example.pawel.championsscore.adapter.MatchAdapter;
 import com.example.pawel.championsscore.service.MatchService;
 
-
-/**
- * Created by Mateusz on 25.04.2017.
- */
-
 public class MatchesFragment extends Fragment {
     public final static String ARG_POSITION = "position";
     private int mCurrentPosition = -1;
@@ -26,11 +21,7 @@ public class MatchesFragment extends Fragment {
     private MatchService matchService = new MatchService();
 
 
-    // The container Activity must implement this interface so the frag can deliver messages
     public interface OnMatchSelectedListener {
-        /**
-         * Called by StageFragment when a list item is selected
-         */
         public void onMatchSelected(int position);
     }
 
@@ -46,10 +37,8 @@ public class MatchesFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            // Set article based on argument passed in
             updateMachtesView(args.getInt(ARG_POSITION));
         } else if (mCurrentPosition != -1) {
-            // Set article based on saved instance state defined during onCreateView
             updateMachtesView(mCurrentPosition);
         }
 
@@ -66,8 +55,6 @@ public class MatchesFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        // This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception.
         try {
             mCallback = (OnMatchSelectedListener) activity;
         } catch (ClassCastException e) {
@@ -83,10 +70,8 @@ public class MatchesFragment extends Fragment {
         ls.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Notify the parent activity of selected item
                 mCallback.onMatchSelected(position);
 
-                // Set the item as checked to be highlighted when in two-pane layout
                 ls.setItemChecked(position, true);
             }
         });

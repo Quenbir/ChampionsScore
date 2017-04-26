@@ -6,18 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.pawel.championsscore.R;
 import com.example.pawel.championsscore.model.Stage;
 
-import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Mateusz on 25.04.2017.
- */
 
 public class StageAdapter extends ArrayAdapter<Stage> {
 

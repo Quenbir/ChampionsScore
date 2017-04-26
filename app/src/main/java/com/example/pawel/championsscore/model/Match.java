@@ -2,31 +2,28 @@ package com.example.pawel.championsscore.model;
 
 import java.util.Date;
 
-/**
- * Created by Mateusz on 23.03.2017.
- */
 
 public class Match {
-    private String homeTeam;
-    private String awayTeam;
+    private Team homeTeam;
+    private Team awayTeam;
     private int homeGoal;
     private int awayGoal;
     private Date date;
     private int stage_id;
 
-    public String getHomeTeam() {
+    public Team getHomeTeam() {
         return homeTeam;
     }
 
-    public void setHomeTeam(String homeTeam) {
+    public void setHomeTeam(Team homeTeam) {
         this.homeTeam = homeTeam;
     }
 
-    public String getAwayTeam() {
+    public Team getAwayTeam() {
         return awayTeam;
     }
 
-    public void setAwayTeam(String awayTeam) {
+    public void setAwayTeam(Team awayTeam) {
         this.awayTeam = awayTeam;
     }
 

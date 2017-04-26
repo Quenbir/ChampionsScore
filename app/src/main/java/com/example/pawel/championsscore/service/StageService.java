@@ -7,11 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by Mateusz on 25.04.2017.
- */
-
-
 public class StageService {
 
     public List<Stage> getAllStages() {

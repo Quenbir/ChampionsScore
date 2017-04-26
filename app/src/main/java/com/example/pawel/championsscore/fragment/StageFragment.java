@@ -20,11 +20,8 @@ public class StageFragment extends Fragment {
     private StageService stageService = new StageService();
     private ListView ls = null;
 
-    // The container Activity must implement this interface so the frag can deliver messages
     public interface OnStageSelectedListener {
-        /**
-         * Called by StageFragment when a list item is selected
-         */
+
         void onStageSelected(int position);
     }
 
@@ -33,7 +30,6 @@ public class StageFragment extends Fragment {
                              Bundle savedInstanceState) {
 
 
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.activity_stages, container, false);
         ls = (ListView) view.findViewById(android.R.id.list);
         ls.setAdapter(new StageAdapter(getActivity(), R.layout.activity_stage, stageService.getAllStages()));
@@ -41,10 +37,8 @@ public class StageFragment extends Fragment {
         ls.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Notify the parent activity of selected item
                 int itemId = ((Stage) parent.getAdapter().getItem(position)).getId();
                 mCallback.onStageSelected(itemId);
-                // Set the item as checked to be highlighted when in two-pane layout
                 ls.setItemChecked(position, true);
             }
         });
@@ -56,8 +50,6 @@ public class StageFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        // This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception.
         try {
             mCallback = (OnStageSelectedListener) activity;
         } catch (ClassCastException e) {

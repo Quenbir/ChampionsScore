@@ -1,8 +1,5 @@
 package com.example.pawel.championsscore.model;
 
-/**
- * Created by Mateusz on 23.03.2017.
- */
 public class Stage {
 
     private String name;

@@ -13,9 +13,6 @@ import com.example.pawel.championsscore.model.Match;
 
 import java.util.List;
 
-/**
- * Created by Mateusz on 23.03.2017.
- */
 
 public class MatchAdapter extends ArrayAdapter<Match> {
     private Context context;
@@ -38,7 +35,7 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         final Match match = matches.get(position);
 
         TextView textView = (TextView) view.findViewById(R.id.textHomeTeam);
-        textView.setText(match.getHomeTeam());
+        textView.setText(match.getHomeTeam().getName());
 
         TextView textView2 = (TextView) view.findViewById(R.id.textHomeScore);
         textView2.setText(String.valueOf(match.getHomeGoal()));
@@ -47,7 +44,7 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         textView3.setText(String.valueOf(match.getAwayGoal()));
 
         TextView textView4 = (TextView) view.findViewById(R.id.textAwayTeam);
-        textView4.setText(match.getAwayTeam());
+        textView4.setText(match.getAwayTeam().getName());
 
         TextView textView5 = (TextView) view.findViewById(R.id.textTime);
         textView5.setText(android.text.format.DateFormat.format("HH:mm", match.getDate()));
