@@ -15,7 +15,9 @@ import com.example.pawel.championsscore.service.MatchService;
 
 public class MatchesFragment extends Fragment {
     public final static String ARG_POSITION = "position";
+    public final static String IS_CONNECTED = "IS_CONNECTED";
     private int mCurrentPosition = -1;
+    private boolean isConnected = false;
     private OnMatchSelectedListener mCallback;
     private ListView ls = null;
     private MatchService matchService = new MatchService();
@@ -30,6 +32,10 @@ public class MatchesFragment extends Fragment {
                              Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             mCurrentPosition = savedInstanceState.getInt(ARG_POSITION);
+        }
+
+        if (isConnected) {
+
         }
 
         View view = inflater.inflate(R.layout.activity_matches, container, false);

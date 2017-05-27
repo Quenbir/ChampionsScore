@@ -1,5 +1,9 @@
 package com.example.pawel.championsscore;
 
+import android.app.Application;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -7,14 +11,42 @@ import android.support.v4.app.FragmentTransaction;
 import com.example.pawel.championsscore.fragment.MatchFragment;
 import com.example.pawel.championsscore.fragment.MatchesFragment;
 import com.example.pawel.championsscore.fragment.StageFragment;
+import com.example.pawel.championsscore.model.db.DaoMaster;
+import com.example.pawel.championsscore.model.db.DaoSession;
+
+import org.greenrobot.greendao.database.Database;
+
 
 public class MainActivity extends FragmentActivity
         implements StageFragment.OnStageSelectedListener, MatchesFragment.OnMatchSelectedListener {
+
+    private DaoSession daoSession;
+
+    public DaoSession getDaoSession() {
+        return daoSession;
+    }
+
+    public static boolean isConnected;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "asdassdassasdsdasoioiotes-db1");
+        Database db = helper.getWritableDb();
+        daoSession = new DaoMaster(db).newSession();
+        // DatabaseOpenHelper helper = new DatabaseOpenHelper(this, ENCRYPTED ? "notes-db-encrypted" : "notes-db", null);
+        // Database db = ENCRYPTED ? helper.getEncryptedWritableDb("super-secret") : helper.getWritableDb();
+        ConnectivityManager cm =
+                (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        if (activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting()) {
+            isConnected = true;
+        }
 
         // Check whether the activity is using the layout version with
         // the fragment_container FrameLayout. If so, we must add the first fragment
