@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,17 +13,10 @@ import android.widget.ListView;
 import com.example.pawel.championsscore.MainActivity;
 import com.example.pawel.championsscore.R;
 import com.example.pawel.championsscore.adapter.StageAdapter;
-import com.example.pawel.championsscore.model.Stage;
-import com.example.pawel.championsscore.model.db.Competition;
-import com.example.pawel.championsscore.model.db.CompetitionDao;
-import com.example.pawel.championsscore.model.db.DaoSession;
-import com.example.pawel.championsscore.model.db.RoundDao;
+import com.example.pawel.championsscore.dao.CompetitionDAO;
+import com.example.pawel.championsscore.dao.RoundDao;
 import com.example.pawel.championsscore.model.webservice.Round;
-import com.example.pawel.championsscore.service.StageService;
-import com.example.pawel.championsscore.utils.WSBeanConverter;
 
-import org.greenrobot.greendao.Property;
-import org.greenrobot.greendao.query.Query;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -32,23 +24,26 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 
 public class StageFragment extends Fragment {
-    private static final String URL = "https://api.crowdscores.com/v1/rounds?competition_ids=36";
+    private static final int COMPETITION_ID = 36;
+    private static final String URL = "https://api.crowdscores.com/v1/rounds?competition_ids=" + COMPETITION_ID;
     private OnStageSelectedListener mCallback;
-    private StageService stageService = new StageService();
-    private ListView ls = null;
-    private RoundDao roundDao;
-    private CompetitionDao competitionDao;
-    private Query<com.example.pawel.championsscore.model.db.Round> roundQuery;
+    private RoundDao roundDAO;
+    private CompetitionDAO competitionDAO;
+    private ListView ls;
+
+    public StageFragment(RoundDao roundDAO, CompetitionDAO competitionDAO) {
+        this.roundDAO = roundDAO;
+        this.competitionDAO = competitionDAO;
+    }
+
+    public StageFragment (){}
 
     public interface OnStageSelectedListener {
-
         void onStageSelected(int position);
     }
 
@@ -61,22 +56,14 @@ public class StageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
-        DaoSession daoSession = ((MainActivity) getActivity()).getDaoSession();
-        roundDao = daoSession.getRoundDao();
-        competitionDao = daoSession.getCompetitionDao();
-
         View view = inflater.inflate(R.layout.activity_stages, container, false);
         ls = (ListView) view.findViewById(android.R.id.list);
-
         if (MainActivity.isConnected) {
             HttpRequestTask httpRequestTask = new HttpRequestTask();
             httpRequestTask.execute(URL);
         } else {
-            List<Competition> list = competitionDao.loadAll();
-            List<com.example.pawel.championsscore.model.db.Round> rounds = roundDao.loadAll();
-            updateView(WSBeanConverter.convertRoundsToWS(rounds));
+            List<Round> rounds = roundDAO.findByCompetitionId(COMPETITION_ID);
+            updateView(rounds);
         }
         return view;
     }
@@ -84,7 +71,6 @@ public class StageFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
         try {
             mCallback = (OnStageSelectedListener) activity;
         } catch (ClassCastException e) {
@@ -99,31 +85,19 @@ public class StageFragment extends Fragment {
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
             HttpHeaders headers = new HttpHeaders();
-            headers.set("x-crowdscores-api-key", "0b5895d6750d45c6ba0871b8019e8b48");
+            headers.set("x-crowdscores-api-key", MainActivity.API_KEY);
             HttpEntity<?> entity = new HttpEntity<Object>(headers);
             ResponseEntity<Round[]> respEntity = restTemplate.exchange(URL, HttpMethod.GET, entity, Round[].class);
-            List<Round> rounds = Arrays.asList(respEntity.getBody());
-            return rounds;
+            return Arrays.asList(respEntity.getBody());
         }
 
         @Override
         protected void onPostExecute(List<Round> rounds) {
             updateView(rounds);
             for (Round round : rounds) {
-                com.example.pawel.championsscore.model.db.Round r = new com.example.pawel.championsscore.model.db.Round();
-                r.setId(round.getId());
-                r.setName(round.getName());
-                Competition c = new Competition();
-                c.setName(round.getCompetition().getName());
-                c.setFlagUrl(round.getCompetition().getFlagUrl());
-                c.setId(round.getCompetition().getId());
-                competitionDao.insertOrReplaceInTx(c);
-                r.setCompetition(c);
-                roundDao.insertOrReplaceInTx(r);
+                competitionDAO.save(round.getCompetition());
+                roundDAO.save(round);
             }
-
-            List<com.example.pawel.championsscore.model.db.Round> ro = roundDao.loadAll();
-            System.out.print(ro.toString());
         }
     }
 
@@ -132,8 +106,8 @@ public class StageFragment extends Fragment {
         ls.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int itemId = ((Stage) parent.getAdapter().getItem(position)).getId();
-                mCallback.onStageSelected(itemId);
+                long itemId = ((Round) parent.getAdapter().getItem(position)).getId();
+                mCallback.onStageSelected((int)itemId);
                 ls.setItemChecked(position, true);
             }
         });

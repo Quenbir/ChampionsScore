@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.pawel.championsscore.R;
-import com.example.pawel.championsscore.model.Match;
+import com.example.pawel.championsscore.model.webservice.Match;
 
 import java.util.List;
 
@@ -38,10 +38,10 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         textView.setText(match.getHomeTeam().getName());
 
         TextView textView2 = (TextView) view.findViewById(R.id.textHomeScore);
-        textView2.setText(String.valueOf(match.getHomeGoal()));
+        textView2.setText(String.valueOf(match.getHomeGoals()));
 
         TextView textView3 = (TextView) view.findViewById(R.id.textAwayScore);
-        textView3.setText(String.valueOf(match.getAwayGoal()));
+        textView3.setText(String.valueOf(match.getAwayGoals()));
 
         TextView textView4 = (TextView) view.findViewById(R.id.textAwayTeam);
         textView4.setText(match.getAwayTeam().getName());

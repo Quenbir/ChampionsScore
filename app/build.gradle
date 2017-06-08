@@ -1,9 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'org.greenrobot.greendao'
-
-greendao {
-    schemaVersion 1000
-}
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -14,7 +9,6 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'org.springframework.android:spring-android-rest-template:2.0.0.M3'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
-    compile 'org.greenrobot:greendao:3.2.2'
 
     repositories {
         mavenCentral()
@@ -39,6 +33,14 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        jackOptions {
+            enabled true
+        }
+
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     buildTypes {
         release {

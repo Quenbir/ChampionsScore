@@ -7,13 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.pawel.championsscore.R;
 import com.example.pawel.championsscore.adapter.LineupsAdapter;
-import com.example.pawel.championsscore.model.Player;
 import com.example.pawel.championsscore.model.PlayerInterface;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class LineupsTab extends Fragment {
 
@@ -22,33 +22,23 @@ public class LineupsTab extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tab_lineups, container, false);
-
-        ArrayList<PlayerInterface> homeLineup = new ArrayList<>();
-        Player player1 = new Player();
-        player1.setFirstName("Tomasz");
-        player1.setLastName("Hajto");
-        player1.setId(1);
-        player1.setIdTeam(1);
-        player1.setNumber(5);
-        player1.setPosition("Obrońca");
-        homeLineup.add(player1);
-
-        Player player2 = new Player();
-        player2.setFirstName("Tomasz");
-        player2.setLastName("Hajto");
-        player2.setId(1);
-        player2.setIdTeam(1);
-        player2.setNumber(5);
-        player2.setPosition("Obrońca");
-        ArrayList<PlayerInterface> awayLineup = new ArrayList<>();
-        awayLineup.add(player2);
-
-        LineupsAdapter adapter = new LineupsAdapter(getContext(), homeLineup, awayLineup);
-
-        ls = (ListView) view.findViewById(R.id.lineupsList);
-        ls.setAdapter(adapter);
-
         return view;
     }
 
+    public void updateView(List<PlayerInterface> homeLineups, List<PlayerInterface> awayLineups, String homeTeamName, String awayTeamName) {
+        View view = getView();
+        ls = (ListView) view.findViewById(R.id.lineupsList);
+
+        View header = getActivity().getLayoutInflater().inflate(R.layout.header_teams, null);
+        TextView homeTeam = (TextView) header.findViewById(R.id.textHomeTeam);
+        homeTeam.setText(homeTeamName);
+
+        TextView awayTeam = (TextView) header.findViewById(R.id.textAwayTeam);
+        awayTeam.setText(awayTeamName);
+
+        if (ls.getHeaderViewsCount() < 1)
+            ls.addHeaderView(header);
+        ls.setAdapter(new LineupsAdapter(getContext(), homeLineups, awayLineups));
+        ls.setClickable(false);
+    }
 }
