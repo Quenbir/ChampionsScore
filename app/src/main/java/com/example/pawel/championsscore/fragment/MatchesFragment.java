@@ -36,7 +36,6 @@ public class MatchesFragment extends Fragment {
     private String URL = "https://api.crowdscores.com/v1/matches?round_ids=";
     private MatchDAO matchDAO;
     private TeamDAO teamDAO;
-    private List<Match> matches;
 
     public MatchesFragment(MatchDAO matchDAO, TeamDAO teamDAO) {
         this.matchDAO = matchDAO;
@@ -47,7 +46,7 @@ public class MatchesFragment extends Fragment {
     }
 
     public interface OnMatchSelectedListener {
-        public void onMatchSelected(int position);
+        void onMatchSelected(int position);
     }
 
     @Override

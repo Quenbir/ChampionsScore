@@ -28,7 +28,6 @@ public class EventsTab extends Fragment {
         View view = getView();
         ls = (ListView) view.findViewById(R.id.eventsList);
         ls.setAdapter(new MatchInfoAdapter(getContext(), events));
-
     }
 
 

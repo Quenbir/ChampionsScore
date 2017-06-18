@@ -65,9 +65,6 @@ public class MatchFragment extends Fragment {
         if (savedInstanceState != null) {
             matchId = savedInstanceState.getInt(ARG_MATCH);
         }
-        //View view = inflater.inflate(R.layout.activity_matches, container, false);
-        //ls = (ListView) view.findViewById(android.R.id.list);
-
         Bundle args = getArguments();
         if (args != null) {
             matchId = args.getInt(ARG_MATCH);
@@ -83,10 +80,13 @@ public class MatchFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (viewed) {
-            ((InfoFragment) getChildFragmentManager().findFragmentById(R.id.info_fragment)).updateView(events, homePlayers, awayPlayers, homeTeamName, awayTeamName);
-            ((ScoreFragment) getChildFragmentManager().findFragmentById(R.id.score_fragment)).updateView(homeTeamName, awayTeamName, homeScore, awayScore);
-        }
+        if (viewed)
+            updateView();
+    }
+
+    public void updateView() {
+        ((InfoFragment) getChildFragmentManager().findFragmentById(R.id.info_fragment)).updateView(events, homePlayers, awayPlayers, homeTeamName, awayTeamName);
+        ((ScoreFragment) getChildFragmentManager().findFragmentById(R.id.score_fragment)).updateView(homeTeamName, awayTeamName, homeScore, awayScore);
     }
 
     private class HttpRequestTask extends AsyncTask<String, Void, MatchEvents> {
@@ -134,8 +134,7 @@ public class MatchFragment extends Fragment {
 
             homePlayers = filterPlayers(matchEvents.getHomePlayers());
             awayPlayers = filterPlayers(matchEvents.getAwayPlayers());
-            ((InfoFragment) getChildFragmentManager().findFragmentById(R.id.info_fragment)).updateView(events, homePlayers, awayPlayers, homeTeamName, awayTeamName);
-            ((ScoreFragment) getChildFragmentManager().findFragmentById(R.id.score_fragment)).updateView(homeTeamName, awayTeamName, homeScore, awayScore);
+            updateView();
 
             viewed = true;
         }
