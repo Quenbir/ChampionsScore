@@ -12,9 +12,6 @@ import com.example.pawel.championsscore.model.webservice.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Mateusz on 07.06.2017.
- */
 
 public class PlayerDAO {
 
@@ -34,7 +31,8 @@ public class PlayerDAO {
         values.put(DBContract.Player.COLUMN_NUMBER, player.getNumber());
         values.put(DBContract.Player.COLUMN_SHORT_NAME, player.getShortName());
         values.put(DBContract.Player.COLUMN_SQUAD_ROLE, player.getSquadRole());
-        database.insertWithOnConflict(DBContract.Player.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        database.insertWithOnConflict(DBContract.Player.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+
     }
 
     public void save(List<Player> players) {
@@ -60,13 +58,13 @@ public class PlayerDAO {
         String[] selectionArgs = {String.valueOf(id)};
 
         Cursor cursor = database.query(
-                DBContract.Player.TABLE_NAME,     // The table to query
-                projection,                               // The columns to return
-                selection,                                // The columns for the WHERE clause
-                selectionArgs,                            // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                null                                      // don't sort
+                DBContract.Player.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
         );
 
         if (cursor.moveToFirst()) {
@@ -76,14 +74,15 @@ public class PlayerDAO {
             player.setNumber(cursor.getString(2) != null ? Integer.parseInt(cursor.getString(2)) : null);
             player.setShortName(cursor.getString(3));
             player.setSquadRole(cursor.getString(4));
+            cursor.close();
             return player;
         }
+        cursor.close();
         return null;
     }
 
     public void saveMatchPlayer(int matchId, int teamId, List<Player> players) {
         for (Player player : players) {
-            save(player);
             ContentValues values = new ContentValues();
             values.put(DBContract.MatchPlayer.COLUMN_MATCH_ID, matchId);
             values.put(DBContract.MatchPlayer.COLUMN_PLAYER_ID, player.getId());
@@ -98,7 +97,6 @@ public class PlayerDAO {
         SQLiteDatabase database = new SQLiteAdapter(context).getReadableDatabase();
 
         String[] projection = {
-                DBContract.MatchPlayer._ID,
                 DBContract.MatchPlayer.COLUMN_MATCH_ID,
                 DBContract.MatchPlayer.COLUMN_PLAYER_ID,
                 DBContract.MatchPlayer.COLUMN_TEAM_ID
@@ -109,25 +107,22 @@ public class PlayerDAO {
         String[] selectionArgs = {String.valueOf(matchId), String.valueOf(teamId)};
 
         Cursor cursor = database.query(
-                DBContract.MatchPlayer.TABLE_NAME,     // The table to query
-                projection,                               // The columns to return
-                selection,                                // The columns for the WHERE clause
-                selectionArgs,                            // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                null                                      // don't sort
+                DBContract.MatchPlayer.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
         );
 
-        // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                Integer id = Integer.parseInt(cursor.getString(2));
-                if (id != null) {
-                    Player player = find(id);
-                    players.add(player);
-                }
+                Player player = find(Integer.parseInt(cursor.getString(1)));
+                players.add(player);
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return players;
     }
 }

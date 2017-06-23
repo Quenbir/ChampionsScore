@@ -3,6 +3,7 @@ package com.example.pawel.championsscore.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,17 +45,7 @@ public class LineupsAdapter extends ArrayAdapter<PlayerInterface> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        if (homeLineup.size() > awayLineup.size()) {
-            for (int i = 0; i < homeLineup.size() - awayLineup.size(); i++) {
-                awayLineup.add(null);
-            }
-        } else if (homeLineup.size() < awayLineup.size()) {
-            for (int i = 0; i < awayLineup.size() - homeLineup.size(); i++) {
-                homeLineup.add(null);
-            }
-        }
+    public @NonNull View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
         LayoutInflater inflater =
                 (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
@@ -65,25 +56,28 @@ public class LineupsAdapter extends ArrayAdapter<PlayerInterface> {
 
         if (home != null && home.isSection()) {
             SectionItem si = (SectionItem) home;
-            view = inflater.inflate(R.layout.header_center, null);
+            view = inflater.inflate(R.layout.header_bench, null);
             TextView sectionView = (TextView) view.findViewById(R.id.textCenter);
             sectionView.setText(si.getTitle());
 
         } else {
+            view = inflater.inflate(R.layout.view_player, null);
 
-            Player homePlayer = (Player) home;
-            view = inflater.inflate(R.layout.activity_player, null);
-            final TextView title = (TextView) view.findViewById(R.id.homePlayer);
+            if (home instanceof Player) {
+                Player homePlayer = (Player) home;
+                final TextView title = (TextView) view.findViewById(R.id.homePlayer);
 
-            if (title != null && homePlayer != null)
-                title.setText(homePlayer.getNumber() != null ? String.valueOf(homePlayer.getNumber()) + "." + homePlayer.getShortName() : homePlayer.getShortName());
+                if (title != null)
+                    title.setText(homePlayer.getNumber() != null ? String.valueOf(homePlayer.getNumber()) + "." + homePlayer.getShortName() : homePlayer.getShortName());
+            }
+            if (away instanceof Player) {
+                Player awayPlayer = (Player) away;
 
-            Player awayPlayer = (Player) away;
+                final TextView title2 = (TextView) view.findViewById(R.id.awayPlayer);
 
-            final TextView title2 = (TextView) view.findViewById(R.id.awayPlayer);
-
-            if (title2 != null)
-                title2.setText(awayPlayer.getNumber() != null ? String.valueOf(awayPlayer.getNumber()) + "." + awayPlayer.getShortName() : awayPlayer.getShortName());
+                if (title2 != null)
+                    title2.setText(awayPlayer.getNumber() != null ? String.valueOf(awayPlayer.getNumber()) + "." + awayPlayer.getShortName() : awayPlayer.getShortName());
+            }
         }
         return view;
 

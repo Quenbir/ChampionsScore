@@ -2,10 +2,6 @@ package com.example.pawel.championsscore.model;
 
 import android.provider.BaseColumns;
 
-/**
- * Created by Mateusz on 31.05.2017.
- */
-
 public final class DBContract {
     private DBContract() {
     }
@@ -176,7 +172,7 @@ public final class DBContract {
                 COLUMN_PLAYER_ID + " INTEGER, " +
                 COLUMN_TEAM_ID + " INTEGER, " +
                 "FOREIGN KEY(" + COLUMN_PLAYER_ID + ") REFERENCES " +
-                Player.TABLE_NAME + "(" + Player._ID + "))";
+                Player.TABLE_NAME + "(" + Player._ID + ") CONSTRAINT name_unique UNIQUE ( " + COLUMN_MATCH_ID + " , " + COLUMN_PLAYER_ID + " , " + COLUMN_TEAM_ID + " ))";
 
 
     }

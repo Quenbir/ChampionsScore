@@ -6,14 +6,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.pawel.championsscore.model.DBContract;
 
-/**
- * Created by Mateusz on 31.05.2017.
- */
-
 public class SQLiteAdapter extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 9;
-    public static final String DATABASE_NAME = "sample_database";
+    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "championsscore_database";
 
     public SQLiteAdapter(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

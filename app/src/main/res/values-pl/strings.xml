@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">ChampionsScore</string>
+    <string name="loading">Ładowanie...</string>
+    <string name="loading_text">Proszę czekać.</string>
+    <string name="no_internet_connection">Brak połączenia z internetem.</string>
+    <string name="try_again">Spróbuj ponownie</string>
+    <string name="rounds">Rundy</string>
+    <string name="matches">Mecze</string>
+    <string name="match">Mecz</string>
+    <string name="events">Przebieg</string>
+    <string name="lineups">Składy</string>
+    <string name="bench">Rezerwowi</string>
+    <string name="divider">:</string>
+    <string name="url">https://api.crowdscores.com/v1/rounds?competition_ids=</string>
+</resources>

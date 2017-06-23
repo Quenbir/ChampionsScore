@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">ChampionsScore</string>
+    <string name="loading">Loading...</string>
+    <string name="loading_text">Please wait.</string>
+    <string name="no_internet_connection">No internet connection.</string>
+    <string name="try_again">Try again</string>
+    <string name="rounds">Rounds</string>
+    <string name="matches">Matches</string>
+    <string name="match">Match</string>
+    <string name="events">Events</string>
+    <string name="lineups">Lineups</string>
+    <string name="bench">Bench</string>
+    <string name="url">https://api.crowdscores.com/v1/rounds?competition_ids=</string>
+    <string name="divider">:</string>
 </resources>

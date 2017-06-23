@@ -10,10 +10,6 @@ import com.example.pawel.championsscore.model.DBContract;
 import com.example.pawel.championsscore.model.webservice.Competition;
 
 
-/**
- * Created by Mateusz on 31.05.2017.
- */
-
 public class CompetitionDAO {
     private final Activity context;
     private final SQLiteDatabase database;
@@ -46,23 +42,25 @@ public class CompetitionDAO {
         String[] selectionArgs = {String.valueOf(id)};
 
         Cursor cursor = database.query(
-                DBContract.Competition.TABLE_NAME,     // The table to query
-                projection,                               // The columns to return
-                selection,                                // The columns for the WHERE clause
-                selectionArgs,                            // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                null                                      // don't sort
+                DBContract.Competition.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
         );
-
         if (cursor.moveToFirst()) {
             Competition competition = new Competition();
             competition.setId(Integer.parseInt(cursor.getString(0)));
             competition.setName(cursor.getString(1));
             competition.setFlagUrl(cursor.getString(2));
 
+            cursor.close();
             return competition;
         }
+
+        cursor.close();
         return null;
     }
 }

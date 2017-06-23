@@ -1,6 +1,5 @@
 package com.example.pawel.championsscore.layout;
 
-import android.R;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,6 +8,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
+
 
 class SlidingTabStrip extends LinearLayout {
 
@@ -23,7 +23,6 @@ class SlidingTabStrip extends LinearLayout {
     private final int mSelectedIndicatorThickness;
     private final Paint mSelectedIndicatorPaint;
 
-    private final int mDefaultBottomBorderColor;
 
     private int mSelectedPosition;
     private float mSelectionOffset;
@@ -42,10 +41,10 @@ class SlidingTabStrip extends LinearLayout {
         final float density = getResources().getDisplayMetrics().density;
 
         TypedValue outValue = new TypedValue();
-        context.getTheme().resolveAttribute(R.attr.colorForeground, outValue, true);
+        context.getTheme().resolveAttribute(android.R.attr.colorForeground, outValue, true);
         final int themeForegroundColor = outValue.data;
 
-        mDefaultBottomBorderColor = setColorAlpha(themeForegroundColor,
+        final int mDefaultBottomBorderColor = setColorAlpha(themeForegroundColor,
                 DEFAULT_BOTTOM_BORDER_COLOR_ALPHA);
 
         mDefaultTabColorizer = new SimpleTabColorizer();
@@ -61,12 +60,6 @@ class SlidingTabStrip extends LinearLayout {
 
     void setCustomTabColorizer(SlidingTabLayout.TabColorizer customTabColorizer) {
         mCustomTabColorizer = customTabColorizer;
-        invalidate();
-    }
-
-    void setSelectedIndicatorColors(int... colors) {
-        mCustomTabColorizer = null;
-        mDefaultTabColorizer.setIndicatorColors(colors);
         invalidate();
     }
 

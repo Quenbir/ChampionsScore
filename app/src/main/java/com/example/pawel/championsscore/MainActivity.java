@@ -1,28 +1,24 @@
 package com.example.pawel.championsscore;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 
 import com.example.pawel.championsscore.dao.CompetitionDAO;
 import com.example.pawel.championsscore.dao.EventDAO;
 import com.example.pawel.championsscore.dao.MatchDAO;
 import com.example.pawel.championsscore.dao.PlayerDAO;
-import com.example.pawel.championsscore.dao.RoundDao;
+import com.example.pawel.championsscore.dao.RoundDAO;
 import com.example.pawel.championsscore.dao.TeamDAO;
 import com.example.pawel.championsscore.fragment.MatchFragment;
 import com.example.pawel.championsscore.fragment.MatchesFragment;
 import com.example.pawel.championsscore.fragment.StageFragment;
 
-public class MainActivity extends FragmentActivity
+public class MainActivity extends AppCompatActivity
         implements StageFragment.OnStageSelectedListener, MatchesFragment.OnMatchSelectedListener {
     public static String API_KEY = "6ee2bfc2c80641ba9eb9c2105a15f4ec";
-    public static boolean isConnected;
-    private CompetitionDAO competitionDAO;
-    private RoundDao roundDao;
+    public static String URL = "https://api.crowdscores.com/v1/";
     private TeamDAO teamDAO;
     private MatchDAO matchDAO;
     private EventDAO eventDAO;
@@ -31,28 +27,18 @@ public class MainActivity extends FragmentActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        competitionDAO = new CompetitionDAO(this);
-        roundDao = new RoundDao(this, competitionDAO);
+        setContentView(R.layout.activity_main);
+        CompetitionDAO competitionDAO = new CompetitionDAO(this);
+        RoundDAO roundDAO = new RoundDAO(this, competitionDAO);
         teamDAO = new TeamDAO(this);
-        matchDAO = new MatchDAO(this, roundDao, teamDAO);
+        matchDAO = new MatchDAO(this, roundDAO, teamDAO);
         playerDAO = new PlayerDAO(this);
         eventDAO = new EventDAO(this, playerDAO, teamDAO);
-        setContentView(R.layout.activity_main);
-        ConnectivityManager cm =
-                (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-
-        if (activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting()) {
-            isConnected = true;
-        }
-
         if (findViewById(R.id.fragment_container) != null) {
             if (savedInstanceState != null) {
                 return;
             }
-            StageFragment firstFragment = new StageFragment(roundDao, competitionDAO);
+            StageFragment firstFragment = new StageFragment(roundDAO, competitionDAO);
             firstFragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, firstFragment).commit();
@@ -64,7 +50,7 @@ public class MainActivity extends FragmentActivity
                 getSupportFragmentManager().findFragmentById(R.id.matches_fragment);
 
         if (matchesFragment != null) {
-            matchesFragment.updateMachtesView(position, null);
+            matchesFragment.updateMatchesView(position, null);
         } else {
             MatchesFragment newFragment = new MatchesFragment(matchDAO, teamDAO);
             Bundle args = new Bundle();

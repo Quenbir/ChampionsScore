@@ -9,10 +9,6 @@ import com.example.pawel.championsscore.adapter.SQLiteAdapter;
 import com.example.pawel.championsscore.model.DBContract;
 import com.example.pawel.championsscore.model.webservice.Team;
 
-/**
- * Created by Mateusz on 03.06.2017.
- */
-
 public class TeamDAO {
 
     private final Activity context;
@@ -44,22 +40,23 @@ public class TeamDAO {
         String[] selectionArgs = {String.valueOf(teamId)};
 
         Cursor cursor = database.query(
-                DBContract.Team.TABLE_NAME,     // The table to query
-                projection,                               // The columns to return
-                selection,                                // The columns for the WHERE clause
-                selectionArgs,                            // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                null                                      // don't sort
+                DBContract.Team.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
         );
 
-        // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             Team team = new Team();
             team.setId(Integer.parseInt(cursor.getString(0)));
             team.setName(cursor.getString(1));
+            cursor.close();
             return team;
         }
+        cursor.close();
         return null;
     }
 }

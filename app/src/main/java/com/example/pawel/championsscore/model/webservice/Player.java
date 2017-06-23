@@ -4,9 +4,6 @@ import com.example.pawel.championsscore.model.PlayerInterface;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/**
- * Created by Mateusz on 04.06.2017.
- */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Player implements PlayerInterface {
@@ -16,7 +13,6 @@ public class Player implements PlayerInterface {
     private String shortName;
     private Integer number;
     private String squadRole;
-    private Integer teamId;
 
     public long getId() {
         return id;
@@ -58,13 +54,6 @@ public class Player implements PlayerInterface {
         this.squadRole = squadRole;
     }
 
-    public Integer getTeamId() {
-        return teamId;
-    }
-
-    public void setTeamId(Integer teamId) {
-        this.teamId = teamId;
-    }
 
     @Override
     public boolean isSection() {
@@ -79,7 +68,6 @@ public class Player implements PlayerInterface {
                 ", shortName='" + shortName + '\'' +
                 ", number=" + number +
                 ", squadRole='" + squadRole + '\'' +
-                ", teamId=" + teamId +
                 '}';
     }
 }

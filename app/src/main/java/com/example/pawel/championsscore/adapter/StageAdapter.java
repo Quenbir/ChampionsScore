@@ -1,7 +1,7 @@
 package com.example.pawel.championsscore.adapter;
 
-import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,25 +18,25 @@ public class StageAdapter extends ArrayAdapter<Round> {
 
     private Context context;
     private List<Round> stages;
+    private int resource;
 
     public StageAdapter(Context context, int resource, List<Round> objects) {
         super(context, resource, objects);
         this.context = context;
         this.stages = objects;
+        this.resource = resource;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public
+    @NonNull
+    View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
-
-        LayoutInflater inflater =
-                (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.activity_stage, parent, false);
-
+        if (convertView == null)
+            convertView = LayoutInflater.from(context).inflate(resource, parent, false);
         final Round round = stages.get(position);
-
-        TextView textView = (TextView) view.findViewById(R.id.textView);
+        TextView textView = (TextView) convertView.findViewById(R.id.textView);
         textView.setText(round.getName());
-        return view;
+        return convertView;
     }
 }

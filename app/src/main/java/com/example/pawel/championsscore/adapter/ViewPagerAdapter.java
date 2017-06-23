@@ -9,8 +9,8 @@ import com.example.pawel.championsscore.fragment.LineupsTab;
 
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
-    CharSequence Titles[];
-    int NumbOfTabs;
+    private CharSequence Titles[];
+    private int NumbOfTabs;
 
     public ViewPagerAdapter(FragmentManager fm, CharSequence mTitles[], int mNumbOfTabsumb) {
         super(fm);
@@ -22,13 +22,9 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        if (position == 0) {
-            EventsTab tab1 = new EventsTab();
-            return tab1;
-        } else {
-            LineupsTab tab2 = new LineupsTab();
-            return tab2;
-        }
+        if (position == 0)
+            return new EventsTab();
+        else return new LineupsTab();
     }
 
 

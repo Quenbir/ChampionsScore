@@ -3,10 +3,10 @@ package com.example.pawel.championsscore.model.webservice;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Team implements Serializable {
+public class Team {
+
     @JsonProperty("dbid")
     private int id;
     private String name;

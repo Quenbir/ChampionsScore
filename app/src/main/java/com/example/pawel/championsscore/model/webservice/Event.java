@@ -3,12 +3,8 @@ package com.example.pawel.championsscore.model.webservice;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/**
- * Created by Mateusz on 04.06.2017.
- */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-
 public class Event {
     @JsonProperty("dbid")
     private long id;

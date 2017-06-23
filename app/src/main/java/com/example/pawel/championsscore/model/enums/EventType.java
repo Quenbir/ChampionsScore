@@ -5,14 +5,11 @@ package com.example.pawel.championsscore.model.enums;
  */
 
 public enum EventType {
-    SUBSTITUTE("substitution"), GOAL("GOAL"), STATE("STATE"), CARD("CARD");
-    private String type;
-
-    EventType(String type) {
-        this.type = type;
-    }
+    SUBSTITUTION, GOAL, STATE, CARD;
 
     public String getType() {
-        return type;
+        return this.toString().toLowerCase();
     }
+
+
 }

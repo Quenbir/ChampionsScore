@@ -15,19 +15,18 @@ import com.example.pawel.championsscore.model.webservice.Event;
 import java.util.List;
 
 public class EventsTab extends Fragment {
-    private ListView ls;
-    private static View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        this.view = inflater.inflate(R.layout.tab_events, container, false);
-        return view;
+        return inflater.inflate(R.layout.tab_events, container, false);
     }
 
     public void updateView(List<Event> events) {
         View view = getView();
-        ls = (ListView) view.findViewById(R.id.eventsList);
-        ls.setAdapter(new MatchInfoAdapter(getContext(), events));
+        if (view != null) {
+            ListView ls = (ListView) view.findViewById(R.id.eventsList);
+            ls.setAdapter(new MatchInfoAdapter(getContext(), R.layout.view_event, events));
+        }
     }
 
 

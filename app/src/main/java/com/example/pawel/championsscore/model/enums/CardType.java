@@ -7,18 +7,16 @@ import com.example.pawel.championsscore.R;
  */
 
 public enum CardType {
-    FIRST_YELLOW("first-yellow", R.drawable.yellow), SECOND_YELLOW("second-yellow", R.drawable.second_yellow), RED("red", R.drawable.red);
+    FIRST_YELLOW(R.drawable.yellow), SECOND_YELLOW(R.drawable.second_yellow), RED(R.drawable.red);
 
-    private String type;
     private int picture;
 
-    CardType(String type, int picture) {
-        this.type = type;
+    CardType(int picture) {
         this.picture = picture;
     }
 
     public String getType() {
-        return type;
+        return this.toString().toLowerCase();
     }
 
     public int getPicture() {

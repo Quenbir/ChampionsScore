@@ -1,9 +1,15 @@
 package com.example.pawel.championsscore.fragment;
 
-import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,17 +31,19 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class MatchesFragment extends Fragment {
     public final static String ARG_POSITION = "position";
-    private int mCurrentPosition = -1;
-    private boolean isConnected = false;
+    private int roundId = -1;
     private OnMatchSelectedListener mCallback;
     private ListView ls = null;
-    private String URL = "https://api.crowdscores.com/v1/matches?round_ids=";
+    private String URL = MainActivity.URL + "matches?round_ids=";
     private MatchDAO matchDAO;
     private TeamDAO teamDAO;
+    private ProgressDialog progress;
 
     public MatchesFragment(MatchDAO matchDAO, TeamDAO teamDAO) {
         this.matchDAO = matchDAO;
@@ -52,25 +60,31 @@ public class MatchesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        ActionBar toolbar = ((MainActivity) getActivity()).getSupportActionBar();
+        if (toolbar != null)
+            toolbar.setTitle(getString(R.string.app_name) + " - " + getString(R.string.matches));
+
+        progress = ProgressDialog.show(getContext(), getString(R.string.loading),
+                getString(R.string.loading_text), true);
         if (savedInstanceState != null) {
-            mCurrentPosition = savedInstanceState.getInt(ARG_POSITION);
+            roundId = savedInstanceState.getInt(ARG_POSITION);
         }
-        View view = inflater.inflate(R.layout.activity_matches, container, false);
+        View view = inflater.inflate(R.layout.fragment_matches, container, false);
         ls = (ListView) view.findViewById(android.R.id.list);
 
         Bundle args = getArguments();
         if (args != null) {
-            if (MainActivity.isConnected) {
+            if (isConnected()) {
                 HttpRequestTask httpRequestTask = new HttpRequestTask();
                 httpRequestTask.execute(URL + args.getInt(ARG_POSITION));
             } else
-                updateMachtesView(args.getInt(ARG_POSITION), null);
-        } else if (mCurrentPosition != -1) {
-            if (isConnected) {
+                updateMatchesView(args.getInt(ARG_POSITION), null);
+        } else if (roundId != -1) {
+            if (isConnected()) {
                 HttpRequestTask httpRequestTask = new HttpRequestTask();
-                httpRequestTask.execute(URL + mCurrentPosition);
+                httpRequestTask.execute(URL + roundId);
             } else
-                updateMachtesView(mCurrentPosition, null);
+                updateMatchesView(roundId, null);
         }
         return view;
     }
@@ -81,13 +95,13 @@ public class MatchesFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
         try {
-            mCallback = (OnMatchSelectedListener) activity;
+            mCallback = (OnMatchSelectedListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnMatchSelectedListener");
         }
     }
@@ -99,39 +113,85 @@ public class MatchesFragment extends Fragment {
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
             HttpHeaders headers = new HttpHeaders();
             headers.set("x-crowdscores-api-key", MainActivity.API_KEY);
-            HttpEntity<?> entity = new HttpEntity<Object>(headers);
+            HttpEntity<?> entity = new HttpEntity<>(headers);
             ResponseEntity<Match[]> respEntity = restTemplate.exchange(params[0], HttpMethod.GET, entity, Match[].class);
             return Arrays.asList(respEntity.getBody());
+
         }
 
         @Override
         protected void onPostExecute(List<Match> matches) {
-            updateMachtesView(null, matches);
-            for (Match match : matches) {
-                teamDAO.save(match.getAwayTeam());
-                teamDAO.save(match.getHomeTeam());
-                matchDAO.save(match);
-            }
+            updateMatchesView(null, matches);
         }
     }
 
-    public void updateMachtesView(Integer position, List<Match> matches) {
-        if (matches != null && !matches.isEmpty()) {
-            ls.setAdapter(new MatchAdapter(getActivity(), R.layout.activity_match, matches));
-        } else if (position != null) {
-            ls.setAdapter(new MatchAdapter(getActivity(), R.layout.activity_match, matchDAO.findByRoundId(position)));
-            mCurrentPosition = position;
+    public void updateMatchesView(Integer roundId, List<Match> matches) {
+        if ((matches == null || matches.isEmpty()) && roundId != null) {
+            matches = matchDAO.findByRoundId(roundId);
+            this.roundId = roundId;
         }
 
+        if (matches != null && !matches.isEmpty()) {
+            Collections.sort(matches, new Comparator<Match>() {
+                public int compare(Match o1, Match o2) {
+                    return Long.compare(o1.getDate(), o2.getDate());
+                }
 
-        ls.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            });
+            ls.setAdapter(new MatchAdapter(getActivity(), R.layout.view_match, matches));
+
+
+            ls.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Match match = ((Match) parent.getAdapter().getItem(position));
+                    mCallback.onMatchSelected((int) match.getId());
+                    ls.setItemChecked(position, true);
+                    if (isConnected()) {
+                        teamDAO.save(match.getAwayTeam());
+                        teamDAO.save(match.getHomeTeam());
+                        matchDAO.save(match);
+                    }
+                }
+            });
+        } else if (!isConnected()) showAlertDialog(getActivity());
+        progress.dismiss();
+    }
+
+    private boolean isConnected() {
+        ConnectivityManager cm =
+                (ConnectivityManager) this.getActivity().getApplication().getApplicationContext()
+                        .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        return (activeNetwork != null && activeNetwork.isConnectedOrConnecting());
+    }
+
+    public void showAlertDialog(Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setPositiveButton(getString(R.string.try_again), new DialogInterface.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int matchId = (int) ((Match) parent.getAdapter().getItem(position)).getId();
-                mCallback.onMatchSelected(matchId);
-                ls.setItemChecked(position, true);
+            public void onClick(DialogInterface dialog, int which) {
+                progress.show();
+                Bundle args = getArguments();
+                if (args != null) {
+                    if (isConnected()) {
+                        HttpRequestTask httpRequestTask = new HttpRequestTask();
+                        httpRequestTask.execute(URL + args.getInt(ARG_POSITION));
+                    } else
+                        updateMatchesView(args.getInt(ARG_POSITION), null);
+                } else if (roundId != -1) {
+                    if (isConnected()) {
+                        HttpRequestTask httpRequestTask = new HttpRequestTask();
+                        httpRequestTask.execute(URL + roundId);
+                    } else
+                        updateMatchesView(roundId, null);
+                }
             }
         });
+        builder.setMessage(getString(R.string.no_internet_connection));
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
 }

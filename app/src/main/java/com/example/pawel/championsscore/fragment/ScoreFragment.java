@@ -5,35 +5,21 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.pawel.championsscore.R;
-import com.example.pawel.championsscore.adapter.MatchInfoAdapter;
-import com.example.pawel.championsscore.model.webservice.Event;
 
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 
 public class ScoreFragment extends Fragment {
-
-    private ListView ls;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.view_score, container, false);
-        /*Match match = new MatchService().getAllMatches().iterator().next();
-
-        TextView textHomeTeam = (TextView) view.findViewById(R.id.textHomeTeam);
-        textHomeTeam.setText(match.getHomeTeam().getName());
-        TextView textAwayTeam = (TextView) view.findViewById(R.id.textAwayTeam);
-        textAwayTeam.setText(match.getAwayTeam().getName());
-        TextView textHomeScore = (TextView) view.findViewById(R.id.textHomeScore);
-        textHomeScore.setText(String.valueOf(match.getHomeGoals()));
-        TextView textAwayScore = (TextView) view.findViewById(R.id.textAwayScore);
-        textAwayScore.setText(String.valueOf(match.getAwayGoals()));*/
-        return view;
+        return inflater.inflate(R.layout.view_score, container, false);
     }
 
     @Override
@@ -41,17 +27,22 @@ public class ScoreFragment extends Fragment {
         super.onStart();
     }
 
-    public void updateView(String homeTeam, String awayTeam, int homeScore, int awayScore) {
+    public void updateView(String homeTeam, String awayTeam, int homeScore, int awayScore, Long date) {
 
         View view = getView();
-        TextView textHomeTeam = (TextView) view.findViewById(R.id.textHomeTeam);
-        textHomeTeam.setText(homeTeam);
-        TextView textAwayTeam = (TextView) view.findViewById(R.id.textAwayTeam);
-        textAwayTeam.setText(awayTeam);
-        TextView textHomeScore = (TextView) view.findViewById(R.id.textHomeScore);
-        textHomeScore.setText(String.valueOf(homeScore));
-        TextView textAwayScore = (TextView) view.findViewById(R.id.textAwayScore);
-        textAwayScore.setText(String.valueOf(awayScore));
+        if (view != null) {
+            TextView textHomeTeam = (TextView) view.findViewById(R.id.textHomeTeam);
+            textHomeTeam.setText(homeTeam);
+            TextView textAwayTeam = (TextView) view.findViewById(R.id.textAwayTeam);
+            textAwayTeam.setText(awayTeam);
+            TextView textHomeScore = (TextView) view.findViewById(R.id.textHomeScore);
+            textHomeScore.setText(String.valueOf(homeScore));
+            TextView textAwayScore = (TextView) view.findViewById(R.id.textAwayScore);
+            textAwayScore.setText(String.valueOf(awayScore));
+            TextView textDate = (TextView) view.findViewById(R.id.textDate);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+            textDate.setText(sdf.format(new Date(date)));
+        }
 
     }
 }

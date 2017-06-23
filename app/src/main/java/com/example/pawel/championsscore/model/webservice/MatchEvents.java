@@ -6,9 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Mateusz on 04.06.2017.
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MatchEvents {
     @JsonProperty("dbid")
@@ -21,11 +18,10 @@ public class MatchEvents {
     private Long currentStateStart;
     private Boolean isResult;
     private Boolean goToExtraTime;
-
-    List<Player> homePlayers = new ArrayList<>();
-    List<Player> awayPlayers = new ArrayList<>();
+    private List<Player> homePlayers = new ArrayList<>();
+    private List<Player> awayPlayers = new ArrayList<>();
     @JsonProperty("matchevents")
-    List<Event> events = new ArrayList<>();
+    private List<Event> events = new ArrayList<>();
 
     public long getId() {
         return id;

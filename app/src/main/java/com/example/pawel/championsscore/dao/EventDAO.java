@@ -13,9 +13,6 @@ import com.example.pawel.championsscore.model.webservice.MatchEvents;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Mateusz on 07.06.2017.
- */
 
 public class EventDAO {
 
@@ -31,29 +28,25 @@ public class EventDAO {
         database = new SQLiteAdapter(context).getWritableDatabase();
     }
 
-    public void save(Event event) {
+    private void save(Event event) {
         ContentValues values = new ContentValues();
         values.put(DBContract.Event._ID, event.getId());
         values.put(DBContract.Event.COLUMN_CARD_TYPE, event.getCardType());
         values.put(DBContract.Event.COLUMN_HAPPENED_AT, event.getHappenedAt());
         values.put(DBContract.Event.COLUMN_PENALTY, event.getPenalty());
-        if (event.getPlayer() != null) {
-            playerDAO.save(event.getPlayer());
+        if (event.getPlayer() != null)
             values.put(DBContract.Event.COLUMN_PLAYER_ID, event.getPlayer().getId());
-        }
+
         values.put(DBContract.Event.COLUMN_OWN_GOAL, event.getOwnGoal());
-        if (event.getPlayerOff() != null) {
-            playerDAO.save(event.getPlayerOff());
+        if (event.getPlayerOff() != null)
             values.put(DBContract.Event.COLUMN_PLAYER_OFF_ID, event.getPlayerOff().getId());
-        }
-        if (event.getPlayerOn() != null) {
-            playerDAO.save(event.getPlayerOn());
+
+        if (event.getPlayerOn() != null)
             values.put(DBContract.Event.COLUMN_PLAYER_ON_ID, event.getPlayerOn().getId());
-        }
-        if (event.getScoringPlayer() != null) {
-            playerDAO.save(event.getScoringPlayer());
+
+        if (event.getScoringPlayer() != null)
             values.put(DBContract.Event.COLUMN_SCORING_PLAYER_ID, event.getScoringPlayer().getId());
-        }
+
         values.put(DBContract.Event.COLUMN_SIDE, event.getSide());
         values.put(DBContract.Event.COLUMN_TIME, event.getTime());
         values.put(DBContract.Event.COLUMN_SCORING_SIDE, event.getScoringSide());
@@ -63,13 +56,13 @@ public class EventDAO {
 
     }
 
-    public void save(List<Event> events) {
+    private void save(List<Event> events) {
         for (Event event : events) {
             save(event);
         }
     }
 
-    public List<Event> findByMatchId(int matchId) {
+    private List<Event> findByMatchId(int matchId) {
         List<Event> events = new ArrayList<>();
         SQLiteDatabase database = new SQLiteAdapter(context).getReadableDatabase();
 
@@ -96,16 +89,15 @@ public class EventDAO {
         String[] selectionArgs = {String.valueOf(matchId)};
 
         Cursor cursor = database.query(
-                DBContract.Event.TABLE_NAME,     // The table to query
-                projection,                               // The columns to return
-                selection,                                // The columns for the WHERE clause
-                selectionArgs,                            // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                null                                      // don't sort
+                DBContract.Event.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
         );
 
-        // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
                 Event event = new Event();
@@ -126,6 +118,7 @@ public class EventDAO {
                 events.add(event);
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return events;
     }
 
@@ -167,15 +160,14 @@ public class EventDAO {
         String[] selectionArgs = {String.valueOf(matchId)};
 
         Cursor cursor = database.query(
-                DBContract.MatchEvents.TABLE_NAME,     // The table to query
-                projection,                               // The columns to return
-                selection,                                // The columns for the WHERE clause
-                selectionArgs,                            // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                null                                      // don't sort
+                DBContract.MatchEvents.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
         );
-
         if (cursor.moveToFirst()) {
             MatchEvents matchEvents = new MatchEvents();
             matchEvents.setId(Integer.parseInt(cursor.getString(0)));
@@ -190,8 +182,10 @@ public class EventDAO {
             matchEvents.setEvents(findByMatchId(matchId));
             matchEvents.setHomePlayers(playerDAO.findByMatchAndTeam(matchId, Integer.parseInt(cursor.getString(6))));
             matchEvents.setAwayPlayers(playerDAO.findByMatchAndTeam(matchId, Integer.parseInt(cursor.getString(2))));
+            cursor.close();
             return matchEvents;
         }
+        cursor.close();
         return null;
     }
 }

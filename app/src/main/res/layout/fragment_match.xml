@@ -18,6 +18,7 @@ limitations under the License.
     android:id="@+id/match_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#90ece5e5"
     android:orientation="vertical">
 
     <fragment
@@ -30,12 +31,6 @@ limitations under the License.
         android:id="@+id/info_fragment"
         android:name="com.example.pawel.championsscore.fragment.InfoFragment"
         android:layout_width="match_parent"
-        android:layout_height="350dp" />
-
-    <fragment
-        android:id="@+id/bet_fragment"
-        android:name="com.example.pawel.championsscore.fragment.BetFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

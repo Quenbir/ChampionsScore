@@ -17,11 +17,6 @@ import java.util.List;
 
 public class InfoFragment extends Fragment {
 
-    private ViewPager pager;
-    private ViewPagerAdapter adapter;
-    private SlidingTabLayout tabs;
-    private final CharSequence Titles[] = {"Przebieg", "Składy"};
-    private final int Numboftabs = 2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -33,18 +28,23 @@ public class InfoFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        ViewPager pager;
+        ViewPagerAdapter adapter;
+        SlidingTabLayout tabs;
+        final CharSequence titles[] = {getString(R.string.events), getString(R.string.lineups)};
+        final int tabsNo = 2;
         pager = (ViewPager) getActivity().findViewById(R.id.pager);
 
-        adapter = new ViewPagerAdapter(getChildFragmentManager(), Titles, Numboftabs);
+        adapter = new ViewPagerAdapter(getChildFragmentManager(), titles, tabsNo);
         pager.setAdapter(adapter);
 
         tabs = (SlidingTabLayout) getActivity().findViewById(R.id.tabs);
-        tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
+        tabs.setDistributeEvenly(true);
 
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.colorPrimary);
+                return R.color.colorPrimary;
             }
         });
 

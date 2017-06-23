@@ -8,26 +8,21 @@ import android.database.sqlite.SQLiteDatabase;
 import com.example.pawel.championsscore.adapter.SQLiteAdapter;
 import com.example.pawel.championsscore.model.DBContract;
 import com.example.pawel.championsscore.model.webservice.Match;
-import com.example.pawel.championsscore.model.webservice.Player;
-import com.example.pawel.championsscore.model.webservice.Team;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Mateusz on 03.06.2017.
- */
 
 public class MatchDAO {
 
     private final Activity context;
     private final SQLiteDatabase database;
-    private final RoundDao roundDAO;
+    private final RoundDAO roundDAO;
     private final TeamDAO teamDAO;
 
-    public MatchDAO(Activity context, RoundDao roundDao, TeamDAO teamDAO) {
+    public MatchDAO(Activity context, RoundDAO roundDAO, TeamDAO teamDAO) {
         this.context = context;
-        this.roundDAO = roundDao;
+        this.roundDAO = roundDAO;
         this.teamDAO = teamDAO;
         database = new SQLiteAdapter(context).getWritableDatabase();
     }
@@ -40,6 +35,7 @@ public class MatchDAO {
         values.put(DBContract.Match.COLUMN_AWAY_TEAM_ID, match.getAwayTeam().getId());
         values.put(DBContract.Match.COLUMN_HOME_TEAM_ID, match.getHomeTeam().getId());
         values.put(DBContract.Match.COLUMN_ROUND_ID, match.getRound().getId());
+        values.put(DBContract.Match.COLUMN_DATE, match.getDate());
         database.insertWithOnConflict(DBContract.Match.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
     }
@@ -54,7 +50,8 @@ public class MatchDAO {
                 DBContract.Match.COLUMN_HOME_GOAL,
                 DBContract.Match.COLUMN_AWAY_TEAM_ID,
                 DBContract.Match.COLUMN_HOME_TEAM_ID,
-                DBContract.Match.COLUMN_ROUND_ID
+                DBContract.Match.COLUMN_ROUND_ID,
+                DBContract.Match.COLUMN_DATE
         };
 
         String selection =
@@ -62,16 +59,15 @@ public class MatchDAO {
         String[] selectionArgs = {String.valueOf(roundId)};
 
         Cursor cursor = database.query(
-                DBContract.Match.TABLE_NAME,     // The table to query
-                projection,                               // The columns to return
-                selection,                                // The columns for the WHERE clause
-                selectionArgs,                            // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                null                                      // don't sort
+                DBContract.Match.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
         );
 
-        // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
                 Match match = new Match();
@@ -80,11 +76,12 @@ public class MatchDAO {
                 match.setHomeGoals(Integer.parseInt(cursor.getString(2)));
                 match.setAwayTeam(teamDAO.find(Integer.parseInt(cursor.getString(3))));
                 match.setHomeTeam(teamDAO.find(Integer.parseInt(cursor.getString(4))));
-                match.setRound(roundDAO.find(Integer.parseInt(cursor.getString(4))));
-                // Adding contact to list
+                match.setRound(roundDAO.find(Integer.parseInt(cursor.getString(5))));
+                match.setDate(Long.parseLong(cursor.getString(6)));
                 matches.add(match);
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return matches;
     }
 

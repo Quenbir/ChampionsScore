@@ -7,20 +7,12 @@
 
 
     <TextView
-        android:id="@+id/textHomeTeam"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:gravity="start|center_vertical"
-        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
-
-    <TextView
-        android:id="@+id/textAwayTeam"
+        android:id="@+id/textCenter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:gravity="center_vertical|end"
-        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+        android:gravity="center"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textStyle="bold" />
 
     <View
         android:layout_width="match_parent"
